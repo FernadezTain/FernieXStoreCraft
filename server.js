@@ -312,5 +312,17 @@ app.post('/api/cancel-order', modSecret, async (req, res) => {
     res.json({ ok: true, refunded });
 });
 
+// GET /api/balance-for-mod?uuid=xxx — мод запрашивает баланс игрока
+app.get('/api/balance-for-mod', modSecret, async (req, res) => {
+    const { uuid } = req.query;
+    if (!uuid) return res.status(400).json({ error: 'missing uuid' });
+    const { data } = await supabase
+        .from('balance_ledger')
+        .select('balance')
+        .eq('player_uuid', uuid)
+        .single();
+    res.json({ balance: data?.balance ?? 0 });
+});
+
 // ─────────────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => console.log(`[FernieCraft Shop] http://localhost:${PORT}`));
