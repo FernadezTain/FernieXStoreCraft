@@ -21,6 +21,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/public/index.html');
+});
 
 const supabase  = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 const MC_SECRET = process.env.MC_SECRET || 'CHANGE_ME_SECRET';
