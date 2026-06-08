@@ -12,7 +12,6 @@
 //    PORT=3000
 // ============================================================
 
-require('dotenv').config();
 const express = require('express');
 const cors    = require('cors');
 const crypto  = require('crypto');
