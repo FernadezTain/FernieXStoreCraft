@@ -287,7 +287,7 @@ header { border-bottom: 1px solid var(--border); backdrop-filter: blur(16px); ba
         <span class="modal-qty-label">Количество:</span>
         <div class="qty-ctrl">
           <button class="qty-btn2" id="modal-dec">−</button>
-          <span class="qty-val" id="modal-qty-val">1</span>
+          <input id="modal-qty-val" type="number" min="1" class="qty-val" value="1" style="background:none;border:none;outline:none;color:inherit;font:inherit;font-weight:700;font-size:1rem;width:48px;text-align:center;-moz-appearance:textfield;" oninput="this.value=this.value.replace(/[^0-9]/g,'')"/>
           <button class="qty-btn2" id="modal-inc">+</button>
         </div>
       </div>
@@ -455,7 +455,8 @@ function openModal(item) {
 }
 function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); modalItem = null; }
 function updateModalQty() {
-  document.getElementById('modal-qty-val').textContent = modalQty;
+  const inp = document.getElementById('modal-qty-val');
+  inp.value = modalQty;
   document.getElementById('modal-total-val').textContent = '🪙 ' + formatMoney(modalItem.price * modalQty);
 }
 document.getElementById('modal-close').addEventListener('click', closeModal);
@@ -464,6 +465,17 @@ document.getElementById('modal-dec').addEventListener('click', () => { if (modal
 document.getElementById('modal-inc').addEventListener('click', () => {
   const maxStock = modalItem.stock === -1 ? 999 : modalItem.stock;
   if (modalQty < maxStock) { modalQty++; updateModalQty(); }
+});
+document.getElementById('modal-qty-val').addEventListener('input', function() {
+  const maxStock = modalItem ? (modalItem.stock === -1 ? 999 : modalItem.stock) : 999;
+  let val = parseInt(this.value) || 1;
+  if (val < 1) val = 1;
+  if (val > maxStock) val = maxStock;
+  modalQty = val;
+  document.getElementById('modal-total-val').textContent = '🪙 ' + formatMoney(modalItem.price * modalQty);
+});
+document.getElementById('modal-qty-val').addEventListener('blur', function() {
+  this.value = modalQty;
 });
 document.getElementById('modal-add-btn').addEventListener('click', () => {
   addToCart(modalItem.id, modalQty);
